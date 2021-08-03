@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.809.10
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DMOPhotography", "DMOPhotography\DMOPhotography.csproj", "{0A11D91E-066F-4A8A-95E7-14D0AEF8FFCA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0A11D91E-066F-4A8A-95E7-14D0AEF8FFCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A11D91E-066F-4A8A-95E7-14D0AEF8FFCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A11D91E-066F-4A8A-95E7-14D0AEF8FFCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A11D91E-066F-4A8A-95E7-14D0AEF8FFCA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {864B44D2-7E4D-41C5-9362-8BBC194F2689}
+	EndGlobalSection
+EndGlobal
