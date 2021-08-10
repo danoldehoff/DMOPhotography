@@ -5,8 +5,7 @@ name: Build and deploy ASP.Net Core app to Azure Web App - DMOPhotography
 
 on:
   push:
-    branches:
-      - "main"
+    branches: [ main ]
   
 jobs:
   build:
