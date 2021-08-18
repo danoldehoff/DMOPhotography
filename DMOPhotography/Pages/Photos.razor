@@ -7,44 +7,44 @@
 
 <h1>Photos</h1>
 
-@if (!_blobList.Any())
+@if (!_blobDictionary.Any())
 {
     <p><em>Retrieving Photos...</em></p>
 }
 else
 {
-
-    @*@{var containerName = string.Empty;}*@
-    @foreach (var blob in _blobList)
+    @foreach (var (containerName, blobList) in _blobDictionary)
     {
-        @*if (blob.Container.Name != containerName)
-        {
-            containerName = blob.Container.Name;
-            <h2 @containerName />
-        }*@
+        <h2> @containerName </h2>
 
-        <img src=@blob.Uri.ToString() alt=@blob.Name>
+        foreach (var blob in blobList)
+        {
+            <img src=@blob.Uri.ToString() alt=@blob.Name height="500" />
+            <br />
+        }
     }
 }
 
 @code
 {
-    IReadOnlyList<CloudBlockBlob> _blobList = Array.Empty<CloudBlockBlob>();
+    readonly Dictionary<string, IReadOnlyList<CloudBlockBlob>> _blobDictionary = new();
 
     protected override async Task OnInitializedAsync()
     {
-        var blobList = new List<CloudBlockBlob>();
+        _blobDictionary.Clear();
 
         var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
 
         await foreach (var containerName in BlobStorageService.GetContainerNames(cancellationTokenSource.Token).ConfigureAwait(false))
         {
-            await foreach (var blob in BlobStorageService.GetBlobs<CloudBlockBlob>(containerName, cancellationTokenSource.Token))
+            var blobList = new List<CloudBlockBlob>();
+
+            await foreach (var blob in BlobStorageService.GetBlobs<CloudBlockBlob>(containerName, cancellationTokenSource.Token).ConfigureAwait(false))
             {
                 blobList.Add(blob);
             }
-        }
 
-        _blobList = blobList.OrderBy(x => x.Container).ThenBy(x => x.Name).ToList();
+            _blobDictionary.Add(containerName, blobList);
+        }
     }
 }
