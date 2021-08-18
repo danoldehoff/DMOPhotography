@@ -1,5 +1,50 @@
 ﻿@page "/photos"
 
+@using System.Threading;
+@using DMOPhotography.Services
+@using Microsoft.Azure.Storage.Blob;
+@inject AzureBlobStorageService BlobStorageService
+
 <h1>Photos</h1>
 
-<img src="https://dmophotography.blob.core.windows.net/testphotos/DSC_6967.jpg" alt="Jessie and Sophia">
+@if (!_blobList.Any())
+{
+    <p><em>Retrieving Photos...</em></p>
+}
+else
+{
+
+    @*@{var containerName = string.Empty;}*@
+    @foreach (var blob in _blobList)
+    {
+        @*if (blob.Container.Name != containerName)
+        {
+            containerName = blob.Container.Name;
+            <h2 @containerName />
+        }*@
+
+        <img src=@blob.Uri.ToString() alt=@blob.Name>
+    }
+}
+
+@code
+{
+    IReadOnlyList<CloudBlockBlob> _blobList = Array.Empty<CloudBlockBlob>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var blobList = new List<CloudBlockBlob>();
+
+        var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
+        await foreach (var containerName in BlobStorageService.GetContainerNames(cancellationTokenSource.Token).ConfigureAwait(false))
+        {
+            await foreach (var blob in BlobStorageService.GetBlobs<CloudBlockBlob>(containerName, cancellationTokenSource.Token))
+            {
+                blobList.Add(blob);
+            }
+        }
+
+        _blobList = blobList.OrderBy(x => x.Container).ThenBy(x => x.Name).ToList();
+    }
+}
