@@ -1,5 +1,50 @@
 ﻿@page "/photos"
 
+@using System.Threading;
+@using DMOPhotography.Services
+@using Microsoft.Azure.Storage.Blob;
+@inject AzureBlobStorageService BlobStorageService
+
 <h1>Photos</h1>
 
-<img src="https://dmophotography.blob.core.windows.net/testphotos/DSC_6967.jpg" alt="Jessie and Sophia">
+@if (!_blobDictionary.Any())
+{
+    <p><em>Retrieving Photos...</em></p>
+}
+else
+{
+    @foreach (var (containerName, blobList) in _blobDictionary)
+    {
+        <h2> @containerName </h2>
+
+        foreach (var blob in blobList)
+        {
+            <img src=@blob.Uri.ToString() alt=@blob.Name height="500" />
+            <br />
+        }
+    }
+}
+
+@code
+{
+    readonly Dictionary<string, IReadOnlyList<CloudBlockBlob>> _blobDictionary = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _blobDictionary.Clear();
+
+        var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
+        await foreach (var containerName in BlobStorageService.GetContainerNames(cancellationTokenSource.Token).ConfigureAwait(false))
+        {
+            var blobList = new List<CloudBlockBlob>();
+
+            await foreach (var blob in BlobStorageService.GetBlobs<CloudBlockBlob>(containerName, cancellationTokenSource.Token).ConfigureAwait(false))
+            {
+                blobList.Add(blob);
+            }
+
+            _blobDictionary.Add(containerName, blobList);
+        }
+    }
+}

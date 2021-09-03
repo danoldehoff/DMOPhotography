@@ -1,20 +1,19 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using DMOPhotography.Services;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.Azure.Storage;
+using Microsoft.Azure.Storage.Blob;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using DMOPhotography.Data;
 
 namespace DMOPhotography
 {
     public class Startup
     {
+        readonly static string _storageConnectionString = Environment.GetEnvironmentVariable("BlobStorageConnectionString") ?? throw new InvalidOperationException("Could Not Find BlobStorageConnectionString");
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -28,7 +27,8 @@ namespace DMOPhotography
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
+            services.AddSingleton<AzureBlobStorageService>();
+            services.AddSingleton<CloudBlobClient>(CloudStorageAccount.Parse(_storageConnectionString).CreateCloudBlobClient());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
