@@ -17,11 +17,10 @@ else
     {
         <h2> @containerName </h2>
 
-        foreach (var blob in blobList)
-        {
-            <img src=@blob.Uri.ToString() alt=@blob.Name height="500" />
-            <br />
-        }
+
+        <img src=@blobList.First().Uri.ToString() alt=@blobList.First().Name height="500" />
+        <br />
+
     }
 }
 
@@ -29,7 +28,7 @@ else
 {
     readonly Dictionary<string, IReadOnlyList<CloudBlockBlob>> _blobDictionary = new();
 
-    protected override async Task OnInitializedAsync()
+        protected override async Task OnInitializedAsync()
     {
         _blobDictionary.Clear();
 
